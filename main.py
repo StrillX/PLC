@@ -1,42 +1,22 @@
 import re
-def analisa(txt):
-    f = open(txt, encoding='utf-8')
-    content = f.read()
-    occ = {}
-    padrao = '@[a-zA-Z]+{[a-zA-Z0-9:.-]+'
+#([a-zA-Z]*[\s]*=[\s]*([{])*([\sa-zA-Z0-9áçéàÉÁãñêíâ#õóúªº_~\?\+\!$\'\*º:&=.,\;\\\/\(\)\-]|[{][\sa-zA-Z0-9áçéàÉÁãñêíâ#õóúªº_~\?\+\!$\'\*º:&=.,\;\\\/\(\)\-]+[}])*([}])*[ ]*,)|([a-zA-Z]*[\s]*=[\s]*(["])*[\sa-zA-Z0-9áçéàÉÁãñêíâ#õóúªº_~\?\+\!$\'\*º:{}&=.,\\;\\\/\(\)\-]+(["])*[ ]*,?)
 
-    for match in re.finditer(padrao, content):
-        if re.split('{', match.group().title())[0] not in occ:
-            occ[re.split('{', match.group().title())[0]] = 1
+def findFirst(idlinha):
+    for i in idlinha:
+        if i == '{':
+            return '{'
+        elif i == '"':
+            return '"'
         else:
-            occ[re.split('{', match.group().title())[0]] += 1
-    tags={x:[] for x in occ}
-    for match in re.finditer(padrao,content):
-        tags[re.split('{', match.group().title())[0]].append(re.split('{', match.group().title())[1])
-    print(tags)
-
-
-
-
-    f.close()
-    e = open('converte.html', 'w')
-    e.write('<html>\n\t<body>\n\t\t<p>\n')
-    for tag in occ:
-        e.write('\t\t\t'+str(tag)+': '+str(occ[tag])+'<br>'+'\n')
-        #e.write('\t\t\t\t'+str(tags[x for x in tags[x]])+'<br>'+)
-
-    e.write('\t\t</p>\n\t</body>\n</html>')
-    e.close()
-
-detetaBloco = '@[a-zA-Z]+{[a-zA-Z0-9:.-]+,\n([\s]*[a-zA-Z]*[\s]*=[\s]*([{]|["])*[a-zA-Z0-9\s.:=\-,\'\(\)áãéõ]*([}]|["])+,?\n)+}'
+            return '='
 
 
 def addbloco(bloco, info):
-    padraoLinhas = '[a-zA-Z]*[\s]*=[\s]*([{]|["])*[a-zA-Z0-9\s.:=\-,\'\(\)áãéõ]*([}]|["])+,?'
+    padraoLinhas = '([a-zA-Z]*[\s]*=[\s]*([{])*([\sa-zA-Z0-9áçéàÉÁãñêíâ#õóúªº_~\?\+\!$\'\*º:&=.,\;\\\/\(\)\-]|[{][\sa-zA-Z0-9áçéàÉÁãñêíâ#õóúªº_~\?\+\!$\'\*º:&=.,\;\\\/\(\)\-]+[}])*([}])*[ ]*,)|([a-zA-Z]*[\s]*=[\s]*(["])*[\sa-zA-Z0-9áçéàÉÁãñêíâ#õóúªº_~\?\+\!$\'\*º:{}&=.,\\;\\\/\(\)\-]+(["])*[ ]*,?)'
     padraoTag = '@[a-zA-Z]+{[a-zA-Z0-9:.-]+'
     tag = re.search(padraoTag, bloco)
     match = str(re.split('{', tag.group())[0]).title()
-    chave = str(re.split('{', tag.group())[1]).title()
+    chave = str(re.split('{', tag.group())[1])
 
     if match not in info:
         info[match] = {chave: {}}
@@ -46,50 +26,67 @@ def addbloco(bloco, info):
     for linha in re.finditer(padraoLinhas, bloco):
         idlinha = re.split('=', linha.group().title())[0]
         idlinha = str(idlinha).strip()
-        try:
-            infoLinha = re.split('{', linha.group().title())[1]
-            infoLinha = re.sub('\n',' ',str(infoLinha))
+        char = findFirst(re.split('=', linha.group().title())[1])
+        if char == '{':
+            infoLinha = re.split('{', linha.group().title(),maxsplit=1)[1]
+            infoLinha = re.sub('\n', ' ', str(infoLinha))
             infoLinha = re.sub('[\s]', ' ', str(infoLinha))
             info[match][chave][idlinha] = infoLinha[:-2]
-        except:
-            infoLinha = re.split('"', linha.group().title())[1]
-            infoLinha = re.sub('\n',' ',str(infoLinha))
+        elif char == '"':
+            infoLinha = re.split('"', linha.group().title(),maxsplit=1)[1]
+            infoLinha = re.sub('\n', ' ', str(infoLinha))
             infoLinha = re.sub('[\s]', ' ', str(infoLinha))
             info[match][chave][idlinha] = infoLinha
+        else:
+            infoLinha = re.split('=', linha.group().title(),maxsplit=1)[1]
+            infoLinha = re.sub('\n', ' ', str(infoLinha))
+            infoLinha = re.sub('[\s]', ' ', str(infoLinha))
+            info[match][chave][idlinha] = infoLinha[:-2]
 
-    print(info)
+
+    #print(info)
     return info
 
-
-bloco = "@inproceedings{oliveira09b,\
-   title     = {Applying Program Comprehension Techniques to Karel Robot Programs},\
-   author    = {Oliveira, Nuno and and Henriques, Pedro Rangel and\
-            da Cruz, Daniela and Pereira, Maria João Varanda and\
-            Mernik, Marjan and Kosar, Tomaz and Crepinsek, Matej},\
-   booktitle = {Proceedings of the International Multiconference on Computer Science and Information Technology -- 2nd Workshop on Advances in Programming Languages (WAPL'2009)},\
-   pages     = {697 --- 704},\
-   publisher = {IEEE Computer Society Press},\
-   address   = {Mragowo, Poland},\
-   year      = {2009},\
-   month     = \"October\",\
-}',)'"
-blocoq = "@inpRoceedings{oliveira09b2,\
-   title     = {Applying Program Comprehension Techniques to Karel Robot Programs},\
-   author    = {Oliveira, Nuno and and Henriques, Pedro Rangel and da Cruz, Daniela and Pereira, Maria João Varanda and Mernik, Marjan and Kosar, Tomaz and Crepinsek, Matej},\
-   booktitle = {Proceedings of the International Multiconference on Computer Science and Information Technology -- 2nd Workshop on Advances in Programming Languages (WAPL'2009)},\
-   pages     = {697 --- 704},\
-   publisher = {IEEE Computer Society Press},\
-   address   = {Mragowo, Poland},\
-   year      = {2009},\
-   month     = {October},\
-}',)'"
-
-example={}
-addbloco(bloco,example)
-addbloco(blocoq,example)
+def analisa(txt):
+    espacogrande = '&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160'
+    espaco = '&#160&#160&#160'
+    f = open(txt, encoding='utf-8')
+    content = f.read()
+    info = {}
+    conta=0
+    detetaBloco = '@[a-zA-Z]+{([\sa-zA-Z0-9áçéàÉÁãñêíâ#õóúªº_~\?\+\!$\'\*º:&=.,\;\"\\\/\(\)\-{}])+'
+    for bloco in re.finditer(detetaBloco,content):
+        conta+=1
+        info = addbloco(bloco.group(),info)
 
 
 
+    print(info['@Inproceedings']['RPA99'])
+
+    f.close()
+    e = open('converte.html', 'w')
+    e.write('<html>\n\t<body>\n\t\t<p>\n')
+    for tag in info:
+        e.write('\t\t\t'+tag+':'+str(len(info[tag]))+'<br>\n')
+        for chave in info[tag]:
+            e.write('\t\t\t\t'+espacogrande+chave+'<br>\n')
+            try:
+                detailinfo = info[tag][chave]['Author']
+                e.write('\t\t\t\t\t'+espacogrande+espacogrande+'Author: '+detailinfo+'<br>\n')
+            except:
+                pass
+            try:
+                detailinfo = info[tag][chave]['Title']
+                e.write('\t\t\t\t\t' + espacogrande + espacogrande+'Title: ' + detailinfo + '<br>\n')
+            except:
+                pass
+
+    e.write('\t\t</p>\n\t</body>\n</html>')
+    e.close()
 
 
-#analisa('exemplo-utf8.bib')
+
+
+
+
+analisa('C:\\Users\\Bruno\\PycharmProjects\\pythonProject\\exemplo-utf8.bib')
