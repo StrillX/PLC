@@ -1,3 +1,4 @@
+
 import re
 #([a-zA-Z]*[\s]*=[\s]*([{])*([\sa-zA-Z0-9áçéàÉÁãñêíâ#õóúªº_~\?\+\!$\'\*º:&=.,\;\\\/\(\)\-]|[{][\sa-zA-Z0-9áçéàÉÁãñêíâ#õóúªº_~\?\+\!$\'\*º:&=.,\;\\\/\(\)\-]+[}])*([}])*[ ]*,)|([a-zA-Z]*[\s]*=[\s]*(["])*[\sa-zA-Z0-9áçéàÉÁãñêíâ#õóúªº_~\?\+\!$\'\*º:{}&=.,\\;\\\/\(\)\-]+(["])*[ ]*,?)
 
@@ -58,6 +59,48 @@ def analisa(txt):
     for bloco in re.finditer(detetaBloco,content):
         conta+=1
         info = addbloco(bloco.group(),info)
+
+    for tag in info:
+        for chave in info[tag]:
+            for idx in info[tag][chave]:
+                if idx == 'Author':
+                    nospace=info[tag][chave][idx]
+                    nospace=nospace.lstrip()
+                    info[tag][chave][idx]=nospace
+                    if info[tag][chave][idx][0] == '"' or info[tag][chave][idx][0]== '{' and not info[tag][chave][idx] == '{Projecto Camila}':
+                        nochar=info[tag][chave][idx][1:]
+                        nochar= nochar.lstrip()
+                        info[tag][chave][idx] = nochar
+                    if  info[tag][chave][idx][-1] ==',' or info[tag][chave][idx][-1] =='"' :
+                        nochar = info[tag][chave][idx][:-1]
+                        nochar = nochar.lstrip()
+                        info[tag][chave][idx] = nochar
+                    if  info[tag][chave][idx][-1] ==',' or info[tag][chave][idx][-1] =='"' :
+                        nochar = info[tag][chave][idx][:-1]
+                        nochar = nochar.lstrip()
+                        info[tag][chave][idx] = nochar
+    for tag in info:
+        for chave in info[tag]:
+            for idx in info[tag][chave]:
+                if idx == 'Title':
+                    title=info[tag][chave][idx]
+                    title=title.lstrip()
+                    print(title)
+                    if title.count('{')!=title.count('}'):
+                        title=title[1:]
+                        info[tag][chave][idx] = title
+                    if title[0] == '"':
+                        title = title[1:]
+                        info[tag][chave][idx] = title
+                    if  info[tag][chave][idx][-1] ==',' or info[tag][chave][idx][-1] =='"' :
+                        nochar = info[tag][chave][idx][:-1]
+                        nochar = nochar.lstrip()
+                        info[tag][chave][idx] = nochar
+                    if  info[tag][chave][idx][-1] ==',' or info[tag][chave][idx][-1] =='"' :
+                        nochar = info[tag][chave][idx][:-1]
+                        nochar = nochar.lstrip()
+                        info[tag][chave][idx] = nochar
+
 
 
 
