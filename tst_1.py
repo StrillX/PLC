@@ -84,7 +84,7 @@ def addbloco(bloco, info):
 
 def analisa(txt):
     espacogrande = '&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160'
-    espaco = '&#160&#160&#160'
+    tab = '&#9&&#9'
     f = open(txt, encoding='utf-8')
     content = f.read()
     info = {}
@@ -179,21 +179,21 @@ def analisa(txt):
     finalDoFinal = {}
     for chave in dicAutores:
         for individux in dicAutores[chave]:
-            if individux not in finalDoFinal:
-                finalDoFinal[individux] = []
-            lista=finalDoFinal[individux]
-            lista.append(chave)
-            finalDoFinal[individux]=lista
-
-
-
-   
+            if len(individux) > 3:
+                if individux not in finalDoFinal:
+                    finalDoFinal[individux] = []
+                lista=finalDoFinal[individux]
+                lista.append(chave)
+                lista = list(dict.fromkeys(lista))
+                finalDoFinal[individux]=lista
     
+    dicOrdenado = {}
+    sortedaut = sorted(finalDoFinal.keys())
+    for i in sortedaut:
+        for key, value in finalDoFinal.items():
+            if key == i:
+                dicOrdenado[key] = value
 
-    
-    print(finalDoFinal)
-    
-    #print(info['@Inproceedings']['RPA99'])
 
     f.close()
     e = open('converte.html', 'w')
@@ -212,10 +212,15 @@ def analisa(txt):
                 e.write('\t\t\t\t\t' + espacogrande + espacogrande+'Title: ' + detailinfo + '<br>\n')
             except:
                 pass
+
+    e.write('<br>'+ '<br>' +'<br>'+ '<br>' +espacogrande+espacogrande+espacogrande+espacogrande+ 'INDICE:'+'<br>\n')
+    e.write('<br>' + espacogrande + espacogrande + 'AUTORES:' + espacogrande + espacogrande + 'CHAVES:' + '<br>\n')
+    for autor in dicOrdenado:
+        e.write('<br>' + espacogrande + autor + espacogrande+  '.....................' + espacogrande + str(dicOrdenado[autor]) + '<br>\n')
+
+        #for chave in finalDoFinal[autor]:
             
-    #for tag in info:
-        #for chave in info[tag]:
-            #e.write('\t\t\t\t\n\n\n' + espacogrande + chave +': ' + '<br>\n')
+            
             
 
     e.write('\t\t</p>\n\t</body>\n</html>')
