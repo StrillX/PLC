@@ -176,14 +176,22 @@ def analisa(txt):
             dicAutores[chave] = final
             
 
-    
+    finalDoFinal = {}
+    for chave in dicAutores:
+        for individux in dicAutores[chave]:
+            if individux not in finalDoFinal:
+                finalDoFinal[individux] = []
+            lista=finalDoFinal[individux]
+            lista.append(chave)
+            finalDoFinal[individux]=lista
+
 
 
    
     
 
     
-    print(dicAutores)
+    print(finalDoFinal)
     
     #print(info['@Inproceedings']['RPA99'])
 
