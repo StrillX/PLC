@@ -1,3 +1,48 @@
+'''
+ def t_PRINT(t):
+ r’print’
+ return t
+
+ def t_RETURN(t):
+ r’return’
+ return t
+
+ def t_READ(t):
+ r’read()’
+ return t
+def t_WHILE(t):
+ r’while’
+ return t
+
+ def t_INT(t):
+ r’int’
+ return t
+
+ def t_IF(t):
+ r’if’
+ return t
+
+ def t_ELSE(t):
+ r’else’
+ return t
+
+ def t_NOME(t):
+ r’[A-Za-z]+()’
+ return t
+
+ def t_STRING(t):
+ r’"[A-Za-z]+(:)?"’
+ return t
+
+ def t_id(t):
+ r’[a-z]’
+ return t
+
+ def t_num(t):
+ r’(-)?\d+’
+ return t
+'''
+
 import ply.lex as lex
 
 INT = 1
@@ -7,8 +52,8 @@ STRING = 4
 
 
 class Lexer:
-    def __init__(self, tok: dict):
-        self.tok = tok
+    def __init__(self, var: dict):
+        self.var = var
 
     tokens = [
         'INT',
@@ -80,7 +125,7 @@ class Lexer:
     def t_ID(self, t):
         r'[a-zA-Z][a-zA-Z0-9_\']*'
         t.type = Lexer.reservadas.get(t.value, 'ID')
-        v = self.tok.get(t.value, None)
+        v = self.var.get(t.value, None)
         if v is not None:
             tipo = v[1]
             if tipo == INT:
