@@ -76,12 +76,12 @@ class Parser:
         p[0] = p[2]
 
     #Atribuicao de Inteiros Singular
-    def parse_ATribuicao_Int_Singular(self,p):
+    def parse_Atribuicao_Int_Singular(self,p):
         "AtribuicaoINT : AtribuicaoINT"
         p[0] = p[1]
 
     # Atribuicao Multipla de Inteiros
-    def parse_ATribuicao_Int_Multipla(self, p):
+    def parse_Atribuicao_Int_Multipla(self, p):
         "AtribuicaoINT : AtribuicaoINT ',' AtribuicaoINT"
         p[0] = p[1] + p[3]
 
@@ -401,7 +401,7 @@ class Parser:
         self.ifs += 1
 
     def parse_Instrucao_if_else(self,p):
-        "Atribuicao : IF Boolean '{' Instrucoes '}' Else"
+        "Instrucao : IF Boolean '{' Instrucoes '}' Else"
         p[0] = p[2] + rf"jz l{self.ifs}\n" + p[4] + rf"jump le{self.if_else}\n" + rf"l{self.ifs}:\n" + p[6]
         self.ifs +=1
         self.if_else += 1
@@ -416,3 +416,37 @@ class Parser:
         self.ifs += 1
 
     def parse_Instrucao_For(self,p):
+        "Instrucao : FOR '(' Atualiza ';' Boolean ';' Atualiza ')' '{' Instrucoes '}'"
+        p[0] = p[3] + rf"lc{self.ciclo}:\n" + p[5] + rf"jz lb{self.ciclo_fim}\n" + p[10] + p[7] + rf"jump lc{self.ciclo}\n" + rf"lb{self.ciclo_fim}:\n"
+        self.ciclo += 1
+        self.ciclo_fim += 1
+
+    def parse_Instrucao_For_NOINIT(self,p):
+        "Instrucao : FOR '(' Vazio ';' Boolean ';' Atualiza ')' '{' Instrucoes '}'"
+        p[0] = "" + rf"lc{self.ciclo}:\n" + p[5] + rf"jz lb{self.ciclo_fim}\n" + p[10] + p[7] + rf"jump lc{self.ciclo}\n" + rf"lb{self.ciclo_fim}:\n"
+
+    def  parse_Instrucao_While(self,p):
+        "Instrucao : WHILE Boolean '{' Instrucoes '}'"
+        p[0] = rf"lc{self.ciclo}:\n" + p[2] + rf"jz lb{self.ciclo_fim}\n" + p[4] + rf"jump lc{self.ciclo}" + rf"lb{self.ciclo_fim}:\n"
+        self.ciclo += 1
+        self.ciclo_fim += 1
+
+
+    def parse_Boolean(self,p):
+        "Boolean : Expressao"
+        p[0] = p[1]
+
+    def parse_Boolean_ExpLogica(self,p):
+        "Boolean : ExpLogica"
+        p[0] = p[1]
+
+    def parse_String(self,p):
+        "String : Texto"
+        p[0] = rf"pushs \"" + p[1].strip('"') + "\"\n"
+
+    def parse_String_VARSTRING(self,p):
+        "String : VARSTRING"
+        p[0] = rf"pushg {self.tokens[p[1]][0]}\n"
+
+    def parse_String_Input(self,p):
+        "String : "
