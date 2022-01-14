@@ -68,8 +68,7 @@ class Lexer:
         'EQUAL',
         'DIFF',
         'PP',
-        'MM',
-        'POW'
+        'MM'
     ]
     literais = [
         '+',
