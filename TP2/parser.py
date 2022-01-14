@@ -164,12 +164,12 @@ class Parser:
         "AtribuicaoString : ID '=' String ';'"
         if p[1] in self.tokens:
             #Já existe uma variável com o ID p[1]
-            print(rf'A variável {p[1]} declarada na linha {p.numLine} já existe!')
+            print(rf'A variável {p[1]} declarada na linha {p.numline} já existe!')
             raise SyntaxError
         else:
             #Adicionar variável à Stack
-            self.fp[p[1]] = (self.stack_size,STRING)
-            self.stack_size += 1
+            self.fp[p[1]] = (self.tamanho_stack,STRING)
+            self.tamanho_stack += 1
 
         p[0] = p[3]
 
@@ -182,7 +182,7 @@ class Parser:
         "Atribuicao : INTR ID '[' INT ']' ';'"
         if p[2] in self.tokens:
             #Já existe uma variável com o ID p[2]
-            print(rf'A variável {p[2]} declarada na linha {p.numLine} já existe!')
+            print(rf'A variável {p[2]} declarada na linha {p.numline} já existe!')
             raise SyntaxError
         else:
             self.var[p[2]] = (self.tamanho_stack,ARRAY,p[4])
@@ -214,10 +214,10 @@ class Parser:
     def parse_Atribuicao_Matriz(self,p):
         "Atribuicao : INTR ID '[' INT ']' '[' INT ']' ';'"
         if p[2] not in self.tokens:
-            self.tokens[p[2]] = (self.stack_size,ARRAY,(p[4],p[7]))
-            self.stack_size += p[4] * p[7]
+            self.tokens[p[2]] = (self.tamanho_stack,ARRAY,(p[4],p[7]))
+            self.tamanho_stack += p[4] * p[7]
         else:
-            print(rf"A variável {p[2]} foi já foi declarada na linha {p.num_line(2)}")
+            print(rf"A variável {p[2]} foi já foi declarada na linha {p.numline(2)}")
             raise SyntaxError
         p[0] = rf"pushn {p[4]*p[7]}\n"
 
@@ -230,7 +230,7 @@ class Parser:
     def parse_Arrays(self,p):
         "Arrays : Arrays ',' Array"
         if len(p[3]) != len(p[1][0]):
-            print(rf"Os arrays têm de ter dimensões iguais! Erro na linha {p.num_line(2)}")
+            print(rf"Os arrays têm de ter dimensões iguais! Erro na linha {p.numline(2)}")
             raise SyntaxError
         p[0] = p[1]
         p[0].append(p[3])
@@ -239,13 +239,13 @@ class Parser:
     def parse_Atribuicao_Array_Valorado_TamanhoDET(self,p):
         "Atribuicao : INTR ID '[' INT ']' '=' Array ';'"
         if p[2] not in self.tokens:
-            self.tokens[p[2]] = (self.stack_size,ARRAY,p[4])
-            self.stack_size += p[4]
+            self.tokens[p[2]] = (self.tamanho_stack,ARRAY,p[4])
+            self.tamanho_stack += p[4]
         else:
-            print(rf"A variável {p[2]} foi já foi declarada na linha {p.num_line(2)}")
+            print(rf"A variável {p[2]} foi já foi declarada na linha {p.numline(2)}")
             raise SyntaxError
         if len(p[7]) != len(p[4]):
-            print(rf"Os arrays têm de ter dimensões iguais! Erro na linha {p.num_line(2)}")
+            print(rf"Os arrays têm de ter dimensões iguais! Erro na linha {p.numline(2)}")
             raise SyntaxError
         p[0] = ""
         for inteiro in p[7]:
@@ -256,10 +256,10 @@ class Parser:
 
         p[4] = len(p[7])
         if p[2] not in self.tokens:
-            self.tokens[p[2]] = (self.stack_size, ARRAY, p[4])
-            self.stack_size += p[4]
+            self.tokens[p[2]] = (self.tamanho_stack, ARRAY, p[4])
+            self.tamanho_stack += p[4]
         else:
-            print(rf"A variável {p[2]} foi já foi declarada na linha {p.num_line(2)}")
+            print(rf"A variável {p[2]} foi já foi declarada na linha {p.numline(2)}")
             raise SyntaxError
         p[0] = ""
         for inteiro in p[7]:
@@ -272,10 +272,10 @@ class Parser:
         p[7] = len(p[10][0])
 
         if p[2] not in self.tokens:
-            self.tokens[p[2]] = (self.stack_size, ARRAY,(p[4],p[7]))
-            self.stack_size += p[4]*p[7]
+            self.tokens[p[2]] = (self.tamanho_stack, ARRAY,(p[4],p[7]))
+            self.tamanho_stack += p[4]*p[7]
         else:
-            print(rf"A variável {p[2]} foi já foi declarada na linha {p.num_line(2)}")
+            print(rf"A variável {p[2]} foi já foi declarada na linha {p.numline(2)}")
             raise SyntaxError
         p[0] = ""
         for linha in p[10]:
@@ -449,4 +449,22 @@ class Parser:
         p[0] = rf"pushg {self.tokens[p[1]][0]}\n"
 
     def parse_String_Input(self,p):
-        "String : "
+        "String : INPUT '(' ')'"
+        p[0] = rf"read\n"
+
+    def parse_Vazio(self,p):
+        "Vazio : "
+        pass
+    def parse_ERROR(self,p):
+        print(rf"Erro de sintaxe na linha - {p.numline}")
+
+    def build(self, **kwargs):
+        self.tokens = dict()
+        self.tamanho_stack = 0
+        self.lexer = Lexer(self,tokens)
+        self.lexer.build()
+        self.parser = yacc.yacc(module=self,**kwargs)
+        self.ifs = 0
+        self.if_else = 0
+        self.ciclo = 0
+        self.ciclo_fim = 0
