@@ -33,5 +33,6 @@ jump le0
 l0:
 pushs "NAO"
 writes
-le0
+le0:
+
 stop

@@ -19,11 +19,11 @@ padd
 pushg 0
 pushg 12
 
-storen
+storeg
 pushg 0
 pushi 1
 add
-storen 0
+storeg 0
 jump lc0
 lb0:
 pushg 11
@@ -46,7 +46,7 @@ writes
 pushg 0
 pushi 1
  sub
-storen 0
+storeg 0
 jump lc1
 lb1:
 

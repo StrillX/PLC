@@ -425,11 +425,11 @@ class Parser:
 
     def p_Instrucao_Else(self,p):
         "Else : ELSE '{' Instrucoes '}'"
-        p[0] = p[3] + f"le{self.if_else}"
+        p[0] = p[3] + f"le{self.if_else}:\n"
 
     def p_Instrucao_else_if(self,p):
         "Else : ELSE IF Boolean '{' Instrucoes '}' Else"
-        p[0] = p[3] + f"jz l {self.ifs}\n" + p[5] + f"jump le{self.if_else}\n" + f"l{self.ifs}:\n" + p[7]
+        p[0] = p[3] + f"jz l{self.ifs}\n" + p[5] + f"l{self.ifs}\n" + f"le{self.if_else}:\n"
         self.ifs += 1
 
     def p_Instrucao_For(self,p):
