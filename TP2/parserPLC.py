@@ -444,7 +444,7 @@ class Parser:
 
     def  p_Instrucao_While(self,p):
         "Instrucao : WHILE Boolean '{' Instrucoes '}'"
-        p[0] = f"lc{self.ciclo}:\n" + p[2] + f"jz lb{self.ciclo_fim}\n" + p[4] + f"jump lc{self.ciclo}" + f"lb{self.ciclo_fim}:\n"
+        p[0] = f"lc{self.ciclo}:\n" + p[2] + f"jz lb{self.ciclo_fim}\n" + p[4] + f"jump lc{self.ciclo}\n" + f"lb{self.ciclo_fim}:\n"
         self.ciclo += 1
         self.ciclo_fim += 1
 

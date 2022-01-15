@@ -32,7 +32,8 @@ pushi 1
 add
 storeg 0
 l1:
-jump lc0lb0:
+jump lc0
+lb0:
 pushg 0
 writei
 
