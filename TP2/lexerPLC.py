@@ -7,6 +7,7 @@ ARRAY = 3
 STRING = 4
 
 
+
 class Lexer:
     def __init__(self, var: dict):
         self.var = var
@@ -23,6 +24,8 @@ class Lexer:
         'for': 'FOR',
         'while': 'WHILE',
         'print': 'PRINT',
+        'println': 'PRINTLN',
+        'input': 'INPUT'
     }
 
 
@@ -30,20 +33,21 @@ class Lexer:
         'INT',
         'FLOAT',
         'ID',
-        'varINT'
-        'varFLOAT',
-        'varSTRING',
-        'varARRAY',
+        'VARINT',
+        'VARFLOAT',
+        'VARSTRING',
+        'VARARRAY',
         'GEQUAL',
         'LEQUAL',
         'EQUAL',
         'DIFF',
         'PP',
-        'MM'
+        'MM',
+        'LINHA'
     ] + list(reservadas.values())
 
 
-    literais = [
+    literals = [
         '+',
         '-',
         '*',
@@ -97,7 +101,7 @@ class Lexer:
             elif tipo == STRING:
                 t.type = 'VARSTRING'
         return t
-
+    t_LINHA = rf"'(\\'|[^'])*'|\"(\\\"|[^\"])*\""
     t_ignore = ' \t'
 
     def t_error(self, t):
@@ -106,7 +110,7 @@ class Lexer:
 
     def t_newline(self, t):
         r'\n'
-        t.lexer.numline += 1
+        t.lexer.lineno += 1
 
     def build(self, **kwargs):
         self.lexer = lex.lex(module=self, **kwargs)

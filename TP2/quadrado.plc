@@ -1,13 +1,5 @@
-int l1, l2, l3, l4;
+int a,b,c,d;
+str e = "ola";
 
-l1 = int(input("lado 1:"))
-l2 = int(input("lado 2:"))
-l3 = int(input("lado 3:"))
-l4 = int(input("lado 4:"))
+println(e);
 
-if l1 == l2 && l2 == l3 && l3 == l4{
-    println("Sim")
-}
-else{
-    println("Nao")
-}
