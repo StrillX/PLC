@@ -33,7 +33,7 @@ class Parser:
     # Definição de um programa com erros
     def p_Programa_ERROR(self, p):
         "Programa : error"
-        print('Erro!')
+        print('E aprenderes a programar?!')
         raise SystemExit
 
     # Definição de um conjunto de Atribuições genéricas
@@ -473,7 +473,7 @@ class Parser:
         "Vazio : "
         pass
     def p_error(self,p):
-        print(f"Erro de sintaxe na linha - {p.lineno}")
+        print(f"Isto tá mal men, olha a linha -> {p.lineno}")
 
     #################################################################################################################################
     # Inteiros
