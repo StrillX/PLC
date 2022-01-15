@@ -1,5 +1,5 @@
 int tamanho;
-int produtorio;
+int produtorio = 1;
 int valor;
 int i;
 tamanho = int(input());
