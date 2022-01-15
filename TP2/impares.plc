@@ -1,0 +1,13 @@
+int n;
+int valor;
+
+valor = int(input());
+if valor % 2 == 1{
+    n++;
+}
+while(valor != 0){
+    if valor % 2 == 1{
+        n++;
+    }
+}
+print(n);

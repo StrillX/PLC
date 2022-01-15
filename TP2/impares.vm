@@ -1,0 +1,39 @@
+pushi 0
+pushi 0
+start
+read
+atoi
+storeg 1
+pushg 1
+pushi 2
+mod
+pushi 1
+equal
+jz l0
+pushg 0
+pushi 1
+add
+storen 0
+l0:
+lc0:
+pushg 1
+pushi 0
+equal
+not
+jz lb0
+pushg 1
+pushi 2
+mod
+pushi 1
+equal
+jz l1
+pushg 0
+pushi 1
+add
+storen 0
+l1:
+jump lc0lb0:
+pushg 0
+writei
+
+stop

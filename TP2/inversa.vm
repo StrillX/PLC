@@ -1,0 +1,53 @@
+pushi 0
+pushn 10
+pushi 10
+pushi 0
+start
+pushi 0
+storeg 0
+lc0:
+pushg 0
+pushg 11
+inf
+jz lb0
+read
+atoi
+storeg 12
+pushgp
+pushi 1
+padd
+pushg 0
+pushg 12
+
+storen
+pushg 0
+pushi 1
+add
+storen 0
+jump lc0
+lb0:
+pushg 11
+pushi 1
+sub
+storeg 0
+lc1:
+pushg 0
+pushi 0
+supeq
+jz lb1
+pushgp
+pushi 1
+padd
+pushg 0
+loadn
+writei
+pushs "\n"
+writes
+pushg 0
+pushi 1
+ sub
+storen 0
+jump lc1
+lb1:
+
+stop

@@ -340,13 +340,13 @@ class Parser:
     def p_Atualiza_PP(self,p):
         "Atualiza : VARINT PP"
         val = self.var[p[1]][0]
-        p[0] = f"pushg {val}\npushi 1\nadd\nstoren {val}\n"
+        p[0] = f"pushg {val}\npushi 1\nadd\nstoreg {val}\n"
 
     # Definição Atualizacao --
     def p_Atualiza_MM(self, p):
         "Atualiza : VARINT MM"
         val = self.var[p[1]][0]
-        p[0] = f"pushg {val}\npushi 1\n sub\nstoren {val}\n"
+        p[0] = f"pushg {val}\npushi 1\n sub\nstoreg {val}\n"
 
     # Definição Atualizacao ++
     def p_Atualiza_PP_FLOAT(self, p):
@@ -363,12 +363,12 @@ class Parser:
     #Definição de Atualizacao de um elemento de um Array
     def p_Atualiza_Elem_Array(self,p):
         "Atualiza : VARARRAY '[' Expressao ']' '=' Expressao"
-        p[0] = f"pushgp\npushi {self.var[p[1]][0]}\npadd\n{p[3]}{p[6]}\nstoren\n"
+        p[0] = f"pushgp\npushi {self.var[p[1]][0]}\npadd\n{p[3]}{p[6]}\nstoreg\n"
 
     # Definição de Atualizacao de um elemento de uma Matriz
     def p_Atualiza_Elem_Matriz(self,p):
         "Atualiza : VARARRAY '[' Expressao ']' '[' Expressao ']' '=' Expressao"
-        p[0] = f"pushgp\npushi {self.var[p[1]][0]}\npadd\{p[3]}pushi{self.var[p[1]][2][1]}\nmul\n{p[6]}add\n{p[9]}ftoi\nstoren\n"
+        p[0] = f"pushgp\npushi {self.var[p[1]][0]}\npadd\{p[3]}pushi{self.var[p[1]][2][1]}\nmul\n{p[6]}add\n{p[9]}ftoi\nstoreg\n"
 
     #Conversao de Variaveis
     def p_INT2FLOAT(self,p):

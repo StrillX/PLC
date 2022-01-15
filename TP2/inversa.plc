@@ -1,0 +1,13 @@
+int i;
+int array[10];
+int N = 10;
+int valor;
+
+for(i = 0; i < N; i++){
+    valor = int(input());
+    array[i] = valor;
+
+}
+for(i = N-1; i>=0;i--){
+    println(array[i]);
+}
