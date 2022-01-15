@@ -1,32 +1,32 @@
 pushi 0
-pushn 10
-pushi 10
+pushn 7
+pushi 7
 pushi 0
 start
 pushi 0
 storeg 0
 lc0:
 pushg 0
-pushg 11
+pushg 8
 inf
 jz lb0
 read
 atoi
-storeg 12
+storeg 9
 pushgp
 pushi 1
 padd
 pushg 0
-pushg 12
+pushg 9
 
-storeg
+storen
 pushg 0
 pushi 1
 add
 storeg 0
 jump lc0
 lb0:
-pushg 11
+pushg 8
 pushi 1
 sub
 storeg 0

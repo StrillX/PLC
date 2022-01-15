@@ -363,7 +363,7 @@ class Parser:
     #Definição de Atualizacao de um elemento de um Array
     def p_Atualiza_Elem_Array(self,p):
         "Atualiza : VARARRAY '[' Expressao ']' '=' Expressao"
-        p[0] = f"pushgp\npushi {self.var[p[1]][0]}\npadd\n{p[3]}{p[6]}\nstoreg\n"
+        p[0] = f"pushgp\npushi {self.var[p[1]][0]}\npadd\n{p[3]}{p[6]}\nstoren\n"
 
     # Definição de Atualizacao de um elemento de uma Matriz
     def p_Atualiza_Elem_Matriz(self,p):

@@ -1,6 +1,6 @@
 int i;
-int array[10];
-int N = 10;
+int array[7];
+int N = 7;
 int valor;
 
 for(i = 0; i < N; i++){
