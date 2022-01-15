@@ -1,0 +1,37 @@
+pushi 0
+pushi 0
+pushi 0
+pushi 0
+start
+read
+atoi
+storeg 0
+read
+atoi
+storeg 1
+read
+atoi
+storeg 2
+read
+atoi
+storeg 3
+pushg 0
+pushg 1
+equal
+pushg 1
+pushg 2
+equal
+pushg 2
+pushg 3
+equal
+mul
+mul
+jz l0
+pushs "YESSIR"
+writes
+jump le0
+l0:
+pushs "NAO"
+writes
+le0
+stop

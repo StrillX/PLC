@@ -1,0 +1,16 @@
+int tamanho;
+int menor;
+int valor;
+int i;
+tamanho = int(input());
+for(i = 0; i<tamanho;i++){
+    valor = int(input());
+    if i == 0{
+        menor = valor;
+    }
+
+    if valor < menor{
+        menor = valor;
+    }
+}
+print(menor);

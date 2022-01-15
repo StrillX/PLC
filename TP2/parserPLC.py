@@ -15,13 +15,13 @@ class Parser:
     # Seguidas das Instruções
     def p_Programa(self, p):
         "Programa : Atribuicoes Instrucoes"
-        p[0] = p[1] + 'start' + '\n' + p[2] + 'stop' + '\n'
+        p[0] = p[1] + 'start' + '\n' + p[2] + '\nstop' + '\n'
 
     # Definição de um progama sem Atribuições
     # Apenas Instruções
     def p_Programa_NOATRIB(self, p):
         "Programa : Instrucoes"
-        p[0] = 'start' + '\n' + p[1] + 'stop' + '\n'
+        p[0] = 'start' + '\n' + p[1] + '\nstop' + '\n'
 
     # Definição de um programa sem Instruções
     # Apenas Atribuições
@@ -324,7 +324,7 @@ class Parser:
     #Definicao de Atualizar um Inteiro
     def p_Atualiza(self,p):
         "Atualiza : VARINT '=' Expressao"
-        p[0] = f"{p[3]}storeg {self.var[p[1][0]]}\n"
+        p[0] = f"{p[3]}storeg {self.var[p[1]][0]}\n"
 
     # Definicao de Atualizar um Float
     def p_Atualiza_FLOAT(self, p):
@@ -393,6 +393,8 @@ class Parser:
     def p_Instrucao_Print_String(self,p):
         "Instrucao : PRINT '(' String ')' ';'"
         p[0] = p[3] + "writes\n"
+
+
 
     def p_Instrucao_PrintLN(self, p):
         "Instrucao : PRINTLN '(' Expressao ')' ';'"

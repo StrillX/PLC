@@ -1,5 +1,13 @@
 int a,b,c,d;
-str e = "ola";
+a = int(input());
+b = int(input());
+c = int(input());
+d = int(input());
+if a == b && b == c && c == d{
+    print("YESSIR");
+}
+else{
+    print("NAO");
+}
 
-println(e);
 
