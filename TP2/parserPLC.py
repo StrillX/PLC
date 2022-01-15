@@ -1,5 +1,5 @@
 import ply.yacc as yacc
-from lexer import Lexer
+from lexerPLC import Lexer
 
 INT = 1
 FLOAT = 2
@@ -90,7 +90,7 @@ class Parser:
         "AtribuicaoINT : ID '=' Expressao | ID"
         if p[1] in self.var:
             #Já existe uma variável com o ID p[1]
-            print(rf'A variável {p[1]} declarada na linha {p.numline} já existe!')
+            print(rf'A variável {p[1]} declarada na linha {p.lineno} já existe!')
             raise SyntaxError
         else:
             #Adiconar variável à Stack
@@ -127,7 +127,7 @@ class Parser:
         "AtribuicaoFLOAT : ID '=' Expressao | ID"
         if p[1] in self.var:
             # Já existe uma variável com o ID p[1]
-            print(rf'A variável {p[1]} declarada na linha {p.numline} já existe!')
+            print(rf'A variável {p[1]} declarada na linha {p.lineno} já existe!')
             raise SyntaxError
         else:
             # Adiconar variável à Stack
@@ -162,9 +162,9 @@ class Parser:
     # Atribuicao inicializada de Strings
     def parse_Atribuicao_String(self, p):
         "AtribuicaoString : ID '=' String ';'"
-        if p[1] in self.tokens:
+        if p[1] in self.var:
             #Já existe uma variável com o ID p[1]
-            print(rf'A variável {p[1]} declarada na linha {p.numline} já existe!')
+            print(rf'A variável {p[1]} declarada na linha {p.lineno} já existe!')
             raise SyntaxError
         else:
             #Adicionar variável à Stack
@@ -180,9 +180,9 @@ class Parser:
     #Atribuicao nao incializada de um Array
     def parse_Atribuicao_Array(self,p):
         "Atribuicao : INTR ID '[' INT ']' ';'"
-        if p[2] in self.tokens:
+        if p[2] in self.var:
             #Já existe uma variável com o ID p[2]
-            print(rf'A variável {p[2]} declarada na linha {p.numline} já existe!')
+            print(rf'A variável {p[2]} declarada na linha {p.lineno} já existe!')
             raise SyntaxError
         else:
             self.var[p[2]] = (self.tamanho_stack,ARRAY,p[4])
@@ -213,11 +213,11 @@ class Parser:
     #Definição de Matriz
     def parse_Atribuicao_Matriz(self,p):
         "Atribuicao : INTR ID '[' INT ']' '[' INT ']' ';'"
-        if p[2] not in self.tokens:
-            self.tokens[p[2]] = (self.tamanho_stack,ARRAY,(p[4],p[7]))
+        if p[2] not in self.var:
+            self.var[p[2]] = (self.tamanho_stack,ARRAY,(p[4],p[7]))
             self.tamanho_stack += p[4] * p[7]
         else:
-            print(rf"A variável {p[2]} foi já foi declarada na linha {p.numline(2)}")
+            print(rf"A variável {p[2]} foi já foi declarada na linha {p.lineno(2)}")
             raise SyntaxError
         p[0] = rf"pushn {p[4]*p[7]}\n"
 
@@ -230,7 +230,7 @@ class Parser:
     def parse_Arrays(self,p):
         "Arrays : Arrays ',' Array"
         if len(p[3]) != len(p[1][0]):
-            print(rf"Os arrays têm de ter dimensões iguais! Erro na linha {p.numline(2)}")
+            print(rf"Os arrays têm de ter dimensões iguais! Erro na linha {p.lineno(2)}")
             raise SyntaxError
         p[0] = p[1]
         p[0].append(p[3])
@@ -238,14 +238,14 @@ class Parser:
     #Definição de Atribuição de Array Valorado
     def parse_Atribuicao_Array_Valorado_TamanhoDET(self,p):
         "Atribuicao : INTR ID '[' INT ']' '=' Array ';'"
-        if p[2] not in self.tokens:
-            self.tokens[p[2]] = (self.tamanho_stack,ARRAY,p[4])
+        if p[2] not in self.var:
+            self.var[p[2]] = (self.tamanho_stack,ARRAY,p[4])
             self.tamanho_stack += p[4]
         else:
-            print(rf"A variável {p[2]} foi já foi declarada na linha {p.numline(2)}")
+            print(rf"A variável {p[2]} foi já foi declarada na linha {p.lineno(2)}")
             raise SyntaxError
         if len(p[7]) != len(p[4]):
-            print(rf"Os arrays têm de ter dimensões iguais! Erro na linha {p.numline(2)}")
+            print(rf"Os arrays têm de ter dimensões iguais! Erro na linha {p.lineno(2)}")
             raise SyntaxError
         p[0] = ""
         for inteiro in p[7]:
@@ -255,11 +255,11 @@ class Parser:
         "Atribuicao : INTR ID '[' Vazio ']' '=' Array ';'"
 
         p[4] = len(p[7])
-        if p[2] not in self.tokens:
-            self.tokens[p[2]] = (self.tamanho_stack, ARRAY, p[4])
+        if p[2] not in self.var:
+            self.var[p[2]] = (self.tamanho_stack, ARRAY, p[4])
             self.tamanho_stack += p[4]
         else:
-            print(rf"A variável {p[2]} foi já foi declarada na linha {p.numline(2)}")
+            print(rf"A variável {p[2]} foi já foi declarada na linha {p.lineno(2)}")
             raise SyntaxError
         p[0] = ""
         for inteiro in p[7]:
@@ -271,11 +271,11 @@ class Parser:
         p[4] = len(p[10])
         p[7] = len(p[10][0])
 
-        if p[2] not in self.tokens:
-            self.tokens[p[2]] = (self.tamanho_stack, ARRAY,(p[4],p[7]))
+        if p[2] not in self.var:
+            self.var[p[2]] = (self.tamanho_stack, ARRAY,(p[4],p[7]))
             self.tamanho_stack += p[4]*p[7]
         else:
-            print(rf"A variável {p[2]} foi já foi declarada na linha {p.numline(2)}")
+            print(rf"A variável {p[2]} foi já foi declarada na linha {p.lineno(2)}")
             raise SyntaxError
         p[0] = ""
         for linha in p[10]:
@@ -309,60 +309,60 @@ class Parser:
     #Definicao de Atualizar um Inteiro
     def parse_Atualiza(self,p):
         "Atualiza : VARINT '=' Expressao"
-        p[0] = rf"{p[3]}storeg {self.tokens[p[1][0]]}\n"
+        p[0] = rf"{p[3]}storeg {self.var[p[1][0]]}\n"
 
     # Definicao de Atualizar um Float
     def parse_Atualiza_FLOAT(self, p):
         "Atualiza : VARFLOAT '=' ExpressaoFloat"
-        p[0] = rf"{p[3]}storeg {self.tokens[p[1][0]]}\n"
+        p[0] = rf"{p[3]}storeg {self.var[p[1][0]]}\n"
 
     # Definicao de Atualizar uma String
     def parse_Atualiza_STRING(self, p):
         "Atualiza : VARSTRING '=' String"
-        p[0] = rf"{p[3]}storeg {self.tokens[p[1][0]]}\n"
+        p[0] = rf"{p[3]}storeg {self.var[p[1][0]]}\n"
 
     #Definição Atualizacao ++
     def parse_Atualiza_PP(self,p):
         "Atualiza : VARINT PP"
-        val = self.tokens[p[1]][0]
+        val = self.var[p[1]][0]
         p[0] = rf"pushg {val}\npushi 1\n add\nstoren {val}\n"
 
     # Definição Atualizacao --
     def parse_Atualiza_MM(self, p):
         "Atualiza : VARINT MM"
-        val = self.tokens[p[1]][0]
+        val = self.var[p[1]][0]
         p[0] = rf"pushg {val}\npushi 1\n sub\nstoren {val}\n"
 
     # Definição Atualizacao ++
     def parse_Atualiza_PP_FLOAT(self, p):
         "Atualiza : VARFLOAT PP"
-        val = self.tokens[p[1]][0]
+        val = self.var[p[1]][0]
         p[0] = rf"pushg {val}\npushi 1.0\n fadd\nstoreg {val}\n"
 
     # Definição Atualizacao --
     def parse_Atualiza_MM_FLOAT(self, p):
         "Atualiza : VARFLOAT MM"
-        val = self.tokens[p[1]][0]
+        val = self.var[p[1]][0]
         p[0] = rf"pushg {val}\npushi 1.0\n fsub\nstoreg {val}\n"
 
     #Definição de Atualizacao de um elemento de um Array
     def parse_Atualiza_Elem_Array(self,p):
         "Atualiza : VARARRAY '[' Expressao ']' '=' Expressao"
-        p[0] = rf"pushgp\npushi {self.tokens[p[1]][0]}\npadd\n{p[3]}{p[6]}\nstoren\n"
+        p[0] = rf"pushgp\npushi {self.var[p[1]][0]}\npadd\n{p[3]}{p[6]}\nstoren\n"
 
     # Definição de Atualizacao de um elemento de uma Matriz
     def parse_Atualiza_Elem_Matriz(self,p):
         "Atualiza : VARARRAY '[' Expressao ']' '[' Expressao ']' '=' Expressao"
-        p[0] = rf"pushgp\npushi {self.tokens[p[1]][0]}\npadd\{p[3]}pushi{self.tokens[p[1]][2][1]}\nmul\n{p[6]}add\n{p[9]}ftoi\nstoren\n"
+        p[0] = rf"pushgp\npushi {self.var[p[1]][0]}\npadd\{p[3]}pushi{self.var[p[1]][2][1]}\nmul\n{p[6]}add\n{p[9]}ftoi\nstoren\n"
 
     #Conversao de Variaveis
     def parse_INT2FLOAT(self,p):
         "Atualiza : VARFLOAT '=' Expressao"
-        p[0] = rf"{p[3]}ftoi\nstoreg {self.tokens[p[1]][0]}\n"
+        p[0] = rf"{p[3]}ftoi\nstoreg {self.var[p[1]][0]}\n"
 
     def parse_FLOAT2INT(self, p):
         "Atualiza : VARINT '=' ExpressaoFloat"
-        p[0] = rf"{p[3]}ftoi\nstoreg {self.tokens[p[1]][0]}\n"
+        p[0] = rf"{p[3]}ftoi\nstoreg {self.var[p[1]][0]}\n"
 
     def parse_Instrucao_Print(self,p):
         "Instrucao : PRINT '(' Expressao ')' ';'"
@@ -446,7 +446,7 @@ class Parser:
 
     def parse_String_VARSTRING(self,p):
         "String : VARSTRING"
-        p[0] = rf"pushg {self.tokens[p[1]][0]}\n"
+        p[0] = rf"pushg {self.var[p[1]][0]}\n"
 
     def parse_String_Input(self,p):
         "String : INPUT '(' ')'"
@@ -456,14 +456,295 @@ class Parser:
         "Vazio : "
         pass
     def parse_ERROR(self,p):
-        print(rf"Erro de sintaxe na linha - {p.numline}")
+        print(rf"Erro de sintaxe na linha - {p.lineno}")
+
+    #################################################################################################################################
+    # Inteiros
+    # Definição de Soma
+    def parse_Soma(self, p):
+        "Expressao : Expressao '+' Expressao"
+        p[0] = p[1] + p[3] + "add\n"
+
+    # Definição de Subtração
+    def parse_Subtracao(self, p):
+        "Expressao : Expressao '-' Expressao"
+        p[0] = p[1] + p[3] + "sub\n"
+
+    # Definição de Multiplicaçaõ
+    def parse_Multiplicacao(self, p):
+        "Expressao : Expressao '*' Expressao"
+        p[0] = p[1] + p[3] + "mul\n"
+
+    # Defenição de Divisão
+    def parse_Divisao(self, p):
+        "Expressao : Expressao '/' Expressao"
+        p[0] = p[1] + p[3] + "div\n"
+
+    # Definição de Módulo
+    def parser_Modulo(self, p):
+        "Expressao : Expressao '%' Expressao"
+        p[0] = p[1] + p[3] + "mod\n"
+
+    # Dois Float
+    # Definição de Soma
+    def parse_Soma_Float(self, p):
+        "ExpressaoFloat : ExpressaoFloat '+' ExpressaoFloat"
+        p[0] = p[1] + p[3] + "fadd\n"
+
+    # Definição de Subtração
+    def parse_Subtracao_Float(self, p):
+        "ExpressaoFloat : ExpressaoFloat '-' ExpressaoFloat"
+        p[0] = p[1] + p[3] + "fsub\n"
+
+    # Definição de Multiplicaçaõ
+    def parse_Multiplicacao_FLoat(self, p):
+        "ExpressaoFloat : ExpressaoFloat '*' ExpressaoFloat"
+        p[0] = p[1] + p[3] + "fmul\n"
+
+    # Defenição de Divisão
+    def parse_Divisao_Float(self, p):
+        "ExpressaoFloat : ExpressaoFloat '/' ExpressaoFloat"
+        p[0] = p[1] + p[3] + "fdiv\n"
+
+    # Um Int e um Float
+    # Definição de Soma
+    def parse_Soma_Float(self, p):
+        "ExpressaoFloat : Expressao '+' ExpressaoFloat"
+        p[0] = p[1] + 'itof\n' + p[3] + "fadd\n"
+
+    # Definição de Subtração
+    def parse_Subtracao_Float(self, p):
+        "ExpressaoFloat : Expressao '-' ExpressaoFloat"
+        p[0] = p[1] + 'itof\n' + p[3] + "fsub\n"
+
+    # Definição de Multiplicaçaõ
+    def parse_Multiplicacao_FLoat(self, p):
+        "ExpressaoFloat : Expressao '*' ExpressaoFloat"
+        p[0] = p[1] + 'itof\n' + p[3] + "fmul\n"
+
+    # Defenição de Divisão
+    def parse_Divisao_Float(self, p):
+        "ExpressaoFloat : Expressao '/' ExpressaoFloat"
+        p[0] = p[1] + 'itof\n' + p[3] + "fdiv\n"
+
+    # Um Float e um Int
+    # Definição de Soma
+    def parse_Soma_Float(self, p):
+        "ExpressaoFloat : ExpressaoFloat '+' Expressao"
+        p[0] = p[1] + p[3] + 'itof\n' + "fadd\n"
+
+    # Definição de Subtração
+    def parse_Subtracao_Float(self, p):
+        "ExpressaoFloat : ExpressaoFloat '-' Expressao"
+        p[0] = p[1] + p[3] + 'itof\n' + "fsub\n"
+
+    # Definição de Multiplicaçaõ
+    def parse_Multiplicacao_FLoat(self, p):
+        "ExpressaoFloat : ExpressaoFloat '*' Expressao"
+        p[0] = p[1] + p[3] + 'itof\n' + "fmul\n"
+
+    # Defenição de Divisão
+    def parse_Divisao_Float(self, p):
+        "ExpressaoFloat : ExpressaoFloat '/' Expressao"
+        p[0] = p[1] + p[3] + 'itof\n' + "fdiv\n"
+
+    #################################################################################################################################
+
+    # Definição de visualização de Variável
+    def parse_Valor_IntID(self, p):
+        "Valor : VARINT"
+        p[0] = rf"pushg {self.fp[p[1]][0]}\n"
+
+    def parse_Valor_FloatID(self, p):
+        "ValorFloat : VARFLOAT"
+        p[0] = rf"pushg {self.fp[p[1]][0]}\n"
+
+    def parse_Valor_ArrayID(self, p):
+        "Valor : VARARRAY '[' Expressao ']'"
+        p[0] = rf"pushgp\npushi {self.fp[p[1]][0]}\npadd\n{p[3]}loadn\n"
+
+    def parse_Valor_2DArrayID(self, p):
+        "Valor : VARARRAY '[' Expressao ']' '[' Expressao ']'"
+        p[0] = rf"pushgp\npushi {self.fp[p[1]][0]}\npadd\n{p[3]}pushi {self.fp[p[1]][2][1]}\nmul\n{p[6]}add\nloadn\n"
+
+    # Definição do Valor da Variável
+    # Valor de Int
+    def parse_Valor_Int(self, p):
+        "Valor : INT"
+        p[0] = rf"pushi {p[1]}\n"
+
+    # Valor de Float
+    def parse_Valor_FLOAT(self, p):
+        "ValorFloat : FLOAT"
+        p[0] = rf"pushf {p[1]}\n"
+
+    # Valor de uma String em Int
+    def parse_Valor_Str_to_Int(self, p):
+        "Valor : INTR '('String')'"
+        p[0] = rf"{p[3]}atoi\n"
+
+    # Valor de uma String em Float
+    def parse_Valor_str_to_Float(self, p):
+        "ValorFloat : FLOATR '('String')'"
+        p[0] = rf"{p[3]}atof\n"
+
+    # Valor de um Float em Int
+    def parse_Valor_float_to_int(self, p):
+        "Valor : INTR '('ExpressaoFloat')'"
+        p[0] = rf"{p[3]}ftoi\n"
+
+    # Valor de um Int em Float
+    def parse_Valor_int_to_float(self, p):
+        "ValorFloat : FLOATR '('Expressao')'"
+        p[0] = rf"{p[3]}itof\n"
+
+    #################################################################################################################################
+
+    # Definição de Expressão
+    def parse_ValorExpressao(self, p):
+        "Expressao : Valor"
+        p[0] = p[1]
+
+    def parse_ValorExpressao_Float(self, p):
+        "ExpressaoFloat : ValorFloat"
+        p[0] = p[1]
+
+    # Expressão entre parênteses
+    def parse_Expressao_parenteses(self, p):
+        "Expressao : '('Expressao')'"
+        p[0] = p[2]
+
+    def parse_ExpressaoFloat_parenteses(self, p):
+        "ExpressaoFloat : '('ExpressaoFloat')'"
+        p[0] = p[2]
+
+    #################################################################################################################################
+    # Expressões Lógicas
+    # Expressões com Inteiros
+    def parse_Comparacoes_Igual(self, p):
+        "ExpLogica : Expressao EQUAL Expressao"
+        p[0] = p[1] + p[3] + "equal\n"
+
+    def parse_Comparacoes_Diferente(self, p):
+        "ExpLogica : Expressao DIFF Expressao"
+        p[0] = p[1] + p[3] + "equal\nnot\n"
+
+    def parse_Comparacoes_Maior(self, p):
+        "ExpLogica : Expressao '>' Expressao"
+        p[0] = p[1] + p[3] + "sup\n"
+
+    def parse_Comparacoes_Menor(self, p):
+        "ExpLogica : Expressao '<' Expressao"
+        p[0] = p[1] + p[3] + "inf\n"
+
+    def parse_Comparacoes_MaiorIgual(self, p):
+        "ExpLogica : Expressao GEQUAL Expressao"
+        p[0] = p[1] + p[3] + "supeq\n"
+
+    def parse_Comparacoes_MenorIgual(self, p):
+        "ExpLogica : Expressao LEQUAL Expressao"
+        p[0] = p[1] + p[3] + "infeq\n"
+
+    # Expressões com dois Floats
+    def parse_ComparacoesFloat_Igual(self, p):
+        "ExpLogica : ExpressaoFloat EQUAL ExpressaoFloat"
+        p[0] = p[1] + p[3] + "equal\n"
+
+    def parse_ComparacoesFloat_Diferente(self, p):
+        "ExpLogica : ExpressaoFloat DIFF ExpressaoFloat"
+        p[0] = p[1] + p[3] + "equal\nnot\n"
+
+    def parse_ComparacoesFloat_Maior(self, p):
+        "ExpLogica : ExpressaoFloat '>' ExpressaoFloat"
+        p[0] = p[1] + p[3] + "fsup\nftoi\n"
+
+    def parse_ComparacoesFloat_Menor(self, p):
+        "ExpLogica : ExpressaoFloat '<' ExpressaoFloat"
+        p[0] = p[1] + p[3] + "finf\nftoi\n"
+
+    def parse_ComparacoesFloat_MaiorIgual(self, p):
+        "ExpLogica : ExpressaoFloat GEQUAL ExpressaoFloat"
+        p[0] = p[1] + p[3] + "fsupeq\nftoi\n"
+
+    def parse_ComparacoesFLoat_MenorIgual(self, p):
+        "ExpLogica : ExpressaoFloat LEQUAL ExpressaoFloat"
+        p[0] = p[1] + p[3] + "finfeq\nftoi\n"
+
+    # Expressões com um Int e um Float
+    def parse_ComparacoesIntFLoat_Igual(self, p):
+        "ExpLogica : Expressao EQUAL ExpressaoFloat"
+        p[0] = p[1] + "itof\n" + p[3] + "equal\n"
+
+    def parse_ComparacoesFloat_Diferente(self, p):
+        "ExpLogica : Expressao DIFF ExpressaoFloat"
+        p[0] = p[1] + "itof\n" + p[3] + "equal\nnot\n"
+
+    def parse_ComparacoesFloat_Maior(self, p):
+        "ExpLogica : Expressao '>' ExpressaoFloat"
+        p[0] = p[1] + "itof\n" + p[3] + "fsup\nftoi\n"
+
+    def parse_ComparacoesFloat_Menor(self, p):
+        "ExpLogica : Expressao '<' ExpressaoFloat"
+        p[0] = p[1] + "itof\n" + p[3] + "finf\nftoi\n"
+
+    def parse_ComparacoesFloat_MaiorIgual(self, p):
+        "ExpLogica : Expressao GEQUAL ExpressaoFloat"
+        p[0] = p[1] + "itof\n" + p[3] + "fsupeq\nftoi\n"
+
+    def parse_ComparacoesFLoat_MenorIgual(self, p):
+        "ExpLogica : Expressao LEQUAL ExpressaoFloat"
+        p[0] = p[1] + "itof\n" + p[3] + "finfeq\nftoi\n"
+
+    # Expressões com um Float e um Int
+    def parse_ComparacoesFloat_Igual(self, p):
+        "ExpLogica : ExpressaoFloat EQUAL Expressao"
+        p[0] = p[1] + p[3] + "itof\n" + "equal\n"
+
+    def parse_ComparacoesFloat_Diferente(self, p):
+        "ExpLogica : ExpressaoFloat DIFF Expressao"
+        p[0] = p[1] + p[3] + "itof\n" + "equal\nnot\n"
+
+    def parse_ComparacoesFloat_Maior(self, p):
+        "ExpLogica : ExpressaoFloat '>' Expressao"
+        p[0] = p[1] + p[3] + "itof\n" + "fsup\nftoi\n"
+
+    def parse_ComparacoesFloat_Menor(self, p):
+        "ExpLogica : ExpressaoFloat '<' Expressao"
+        p[0] = p[1] + p[3] + "itof\n" + "finf\nftoi\n"
+
+    def parse_ComparacoesFloat_MaiorIgual(self, p):
+        "ExpLogica : ExpressaoFloat GEQUAL Expressao"
+        p[0] = p[1] + p[3] + "itof\n" + "fsupeq\nftoi\n"
+
+    def parse_ComparacoesFLoat_MenorIgual(self, p):
+        "ExpLogica : ExpressaoFloat LEQUAL Expressao"
+        p[0] = p[1] + p[3] + "itof\n" + "finfeq\nftoi\n"
+
+    #################################################################################################################################
+
+    # Os valores das ExpLogica tomam valores de 0 ou 1
+    def parse_ExpLogica_Parenteses(self, p):
+        "ExpLogica : '('ExpLogica')'"
+        p[0] = p[2]
+
+    def parse_ExpLogica_And(self, p):
+        "ExpLogica : ExpLogica AND ExpLogica"
+        p[0] = p[1] + p[3] + "mul\n"
+
+    def parse_ExpLogica_Or(self, p):
+        "ExpLogica : ExpLogica OR ExpLogica"
+        p[0] = p[1] + p[3] + "add\n"
+
+    def parse_ExpLogica_Not(self, p):
+        "ExpLogica : NOT ExpLogica"
+        p[0] = p[2] + "not\n"
 
     def build(self, **kwargs):
-        self.tokens = dict()
+        self.var = dict()
         self.tamanho_stack = 0
-        self.lexer = Lexer(self,tokens)
+        self.lexer = Lexer(self.var)
         self.lexer.build()
-        self.parser = yacc.yacc(module=self,**kwargs)
+        self.parser = yacc.yacc(module=self, **kwargs)
         self.ifs = 0
         self.if_else = 0
         self.ciclo = 0

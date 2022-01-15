@@ -1,47 +1,3 @@
-'''
- def t_PRINT(t):
- r’print’
- return t
-
- def t_RETURN(t):
- r’return’
- return t
-
- def t_READ(t):
- r’read()’
- return t
-def t_WHILE(t):
- r’while’
- return t
-
- def t_INT(t):
- r’int’
- return t
-
- def t_IF(t):
- r’if’
- return t
-
- def t_ELSE(t):
- r’else’
- return t
-
- def t_NOME(t):
- r’[A-Za-z]+()’
- return t
-
- def t_STRING(t):
- r’"[A-Za-z]+(:)?"’
- return t
-
- def t_id(t):
- r’[a-z]’
- return t
-
- def t_num(t):
- r’(-)?\d+’
- return t
-'''
 
 import ply.lex as lex
 
@@ -55,21 +11,38 @@ class Lexer:
     def __init__(self, var: dict):
         self.var = var
 
+    reservadas = {
+        'int': 'INTR',
+        'float': 'FLOATR',
+        'str': 'STRR',
+        'or': 'OR',
+        'and': 'AND',
+        'not': 'NOT',
+        'if': 'IF',
+        'else': 'ELSE',
+        'for': 'FOR',
+        'while': 'WHILE',
+        'print': 'PRINT',
+    }
+
+
     tokens = [
         'INT',
         'FLOAT',
         'ID',
-        'VARINT'
-        'VARFLOAT',
-        'VARSTRING',
-        'VARARRAY',
+        'varINT'
+        'varFLOAT',
+        'varSTRING',
+        'varARRAY',
         'GEQUAL',
         'LEQUAL',
         'EQUAL',
         'DIFF',
         'PP',
         'MM'
-    ]
+    ] + list(reservadas.values())
+
+
     literais = [
         '+',
         '-',
@@ -88,19 +61,7 @@ class Lexer:
         ',',
         ';'
     ]
-    reservadas = {
-        'int': 'INTR',
-        'float': 'FLOATR',
-        'str': 'STRR',
-        'or': 'OR',
-        'and': 'AND',
-        'not': 'NOT',
-        'if': 'IF',
-        'else': 'ELSE',
-        'for': 'FOR',
-        'while': 'WHILE',
-        'print': 'PRINT',
-    }
+
 
     def t_FLOAT(self, t):
         r'(\d*)?\.\d+(e(?:\+|-)\d+)?'
@@ -116,7 +77,7 @@ class Lexer:
     t_LEQUAL = r'<='
     t_EQUAL = r'=='
     t_DIFF = r'!='
-    t_PP = r'++'
+    t_PP = r'\+\+'
     t_MM = r'--'
     t_AND = r'&&'
     t_OR = r'\|\|'
