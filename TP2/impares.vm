@@ -21,6 +21,9 @@ pushi 0
 equal
 not
 jz lb0
+read
+atoi
+storeg 1
 pushg 1
 pushi 2
 mod
