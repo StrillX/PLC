@@ -101,7 +101,7 @@ class Lexer:
             elif tipo == STRING:
                 t.type = 'VARSTRING'
         return t
-    t_LINHA = rf"'(\\'|[^'])*'|\"(\\\"|[^\"])*\""
+    t_LINHA = rf"\"\w*\""
     t_ignore = ' \t'
 
     def t_error(self, t):
