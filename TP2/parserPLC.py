@@ -473,7 +473,7 @@ class Parser:
         "Vazio : "
         pass
     def p_error(self,p):
-        print(f"Isto tá mal men, olha a linha -> {p.lineno}")
+        print(f"Isto tá mal men, olha a linha -> {p.lineno-1}")
 
     #################################################################################################################################
     # Inteiros
